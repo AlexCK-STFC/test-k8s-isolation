@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-zone
+  namespace: ingress-internal 
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              network-zone: internal-net
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              network-zone: internal-net
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-zone
+  namespace: ingress-external
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              network-zone: external-net
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              network-zone: external-net
+  policyTypes:
+    - Ingress
+    - Egress

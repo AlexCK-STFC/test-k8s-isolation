@@ -1,0 +1,5 @@
+apiVersion: v2
+name: httpd-test
+description: A Helm chart for deploying httpd in a test namespace
+version: 0.1.0
+appVersion: "2.4"

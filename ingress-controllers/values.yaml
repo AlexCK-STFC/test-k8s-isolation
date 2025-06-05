@@ -1,0 +1,24 @@
+ingress-nginx-internal:
+  controller:
+    ingressClassResource:
+      name: "internal"
+      default: false
+      controllerValue: "k8s.io/internal-ingress-nginx" 
+      enabled: true
+    ingressClass: "internal"
+    service:
+      type: LoadBalancer
+  namespaceOverride: ingress-internal
+
+
+ingress-nginx-external:
+  controller:
+    ingressClassResource:
+      name: "external"
+      default: false
+      controllerValue: "k8s.io/external-ingress-nginx" 
+      enabled: true
+    ingressClass: "external"
+    service:
+      type: LoadBalancer
+  namespaceOverride: ingress-external

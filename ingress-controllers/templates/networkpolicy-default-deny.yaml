@@ -1,21 +1,14 @@
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
 metadata:
   name: default-deny-all
-  namespace: ingress-internal
 spec:
-  podSelector: {}
-  policyTypes:
+  selector: all()
+  namespaceSelector: "network-zone == 'internal-net' || network-zone == 'external-net'"
+  types:
     - Ingress
     - Egress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: default-deny-all
-  namespace: ingress-external
-spec:
-  podSelector: {}
-  policyTypes:
-    - Ingress
-    - Egress
+  ingress:
+    - action: Deny
+  egress:
+    - action: Deny

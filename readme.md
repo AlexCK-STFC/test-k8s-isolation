@@ -1,3 +1,12 @@
+# Description/Considerations
+- Central tenet is labelling namespaces with `network-zone=internal-net` or `network-zone=external-net`
+  - Can also target by pod label etc, any k8s selector
+- We then have a default-deny network policy, only allowing traffic with nodes with the same network-zone
+- We deploy two ingress controllers with different ingressclasses, with the same network policies and network-zones
+
+- Would require applying a label to all application namespaces
+- Would require adding NetworkPolicy resources to each application
+- Would require RBAC access controls to prevent adding `network-zone` label where it shouldn't be
 # Install
 Set up a k8s/capi cluster, set it as your default kubeconfig, then:
 

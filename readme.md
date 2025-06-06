@@ -12,14 +12,14 @@ Set up a k8s/capi cluster, set it as your default kubeconfig, then:
 
 ```sh
 cd ingress-controllers
-kubectl -apply namespaces.yaml
 kubectl apply -f namespaces.yaml
 help dependencies update .
+helm dependency build
 helm install test-ingress . -f values.yaml 
 
-cd httpd-test
+cd ../httpd-test
 kubectl apply -f namespace.yaml 
-helm install httpd-test . -f values.yaml
+helm install httpd-test -n httpd-test . -f values.yaml
 ```
 
 # Test
@@ -37,7 +37,7 @@ kubectl label namespace busybox-ns network-zone=external-net --overwrite
 kubectl run busybox-temp --rm -it --image=busybox --namespace=busybox-ns --restart=Never -- sh
 wget -O- httpd.httpd-test.svc.cluster.local
 ```
-wget should now fail, and time out eventually
+wget should now not return the index page, and time out eventually (~900 seconds) unless terminated
 
 ```sh
 exit

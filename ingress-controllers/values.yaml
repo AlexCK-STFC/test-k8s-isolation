@@ -8,6 +8,7 @@ ingress-nginx-internal:
     ingressClass: "internal"
     service:
       type: LoadBalancer
+      loadBalancerIP: # "130.x.y.z"
   namespaceOverride: ingress-internal
 
 
@@ -21,4 +22,5 @@ ingress-nginx-external:
     ingressClass: "external"
     service:
       type: LoadBalancer
+      loadBalancerIP: # "130.x.y.z"
   namespaceOverride: ingress-external

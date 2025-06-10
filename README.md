@@ -6,7 +6,7 @@
 
 - Would require applying a label to all application namespaces
 - Requires Calico CNI (which we use by default) for GlobalNetworkPolicy support
-- Would require RBAC access controls to prevent adding `network-zone` label where it shouldn't be
+- ~~Would require RBAC access controls to prevent adding `network-zone` label where it shouldn't be~~ Not needed for our own cluster without user apps
 # Install
 Set up a k8s/capi cluster, set it as your default kubeconfig, then:
 

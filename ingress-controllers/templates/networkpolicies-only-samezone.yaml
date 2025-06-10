@@ -1,0 +1,118 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: deny-app-policy
+spec:
+  namespaceSelector: has(projectcalico.org/name) && kubernetes.io/metadata.name not in {"calico-system", "kube-public", "kube-system", "tigera-operator"}
+  types:
+  - Ingress
+  - Egress
+  egress:
+   # allow all namespaces to communicate to DNS pods
+  - action: Allow
+    protocol: UDP
+    destination:
+      selector: 'k8s-app == "kube-dns"'
+      ports:
+      - 53
+  - action: Allow
+    protocol: TCP
+    destination:
+      selector: 'k8s-app == "kube-dns"'
+      ports:
+      - 53
+---
+# TODO: Is this too broad?
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-all-ingress-controllers
+spec:
+  order: 50
+  namespaceSelector: "projectcalico.org/name in {'ingress-internal', 'ingress-external'}"
+  ingress:
+    - action: Allow
+  egress:
+    - action: Allow
+  selector: "all()"
+  types:
+    - Ingress
+    - Egress
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-internal-net-intrazone
+spec:
+  selector: "all()"
+  namespaceSelector: "network-zone == 'internal-net'"
+  types:
+    - Ingress
+    - Egress
+  ingress:
+    - action: Allow
+      source:
+        namespaceSelector: "network-zone == 'internal-net'"
+  egress:
+    - action: Allow
+      destination:
+        namespaceSelector: "network-zone == 'internal-net'"
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-external-net-intrazone
+spec:
+  selector: "all()"
+  namespaceSelector: "network-zone == 'external-net'"
+  types:
+    - Ingress
+    - Egress
+  ingress:
+    - action: Allow
+      source:
+        namespaceSelector: "network-zone == 'external-net'"
+  egress:
+    - action: Allow
+      destination:
+        namespaceSelector: "network-zone == 'external-net'"
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: deny-internal-net-interzone
+spec:
+  order: 40
+  namespaceSelector: "network-zone == 'internal-net'"
+  selector: "all()"
+  types:
+    - Ingress
+    - Egress
+  egress:
+    - action: Deny
+      destination:
+        namespaceSelector: "network-zone == 'external-net'"
+  ingress:
+    - action: Deny
+      source:
+        namespaceSelector: "network-zone == 'external-net'"
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: deny-external-net-interzone
+spec:
+  order: 40
+  namespaceSelector: "network-zone == 'external-net'"
+  selector: "all()"
+  types:
+    - Ingress
+    - Egress
+  egress:
+    - action: Deny
+      destination:
+        namespaceSelector: "network-zone == 'internal-net'"
+  ingress:
+    - action: Deny
+      source:
+        namespaceSelector: "network-zone == 'internal-net'"
